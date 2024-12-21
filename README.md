@@ -1,0 +1,2 @@
+# CoverLetterGenerator
+Cover letter generator
