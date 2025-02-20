@@ -22,7 +22,7 @@ namespace CoverLetterGenerator
             collection.AddCommonServices();
 
             // Creates a ServiceProvider containing services from the provided IServiceCollection
-            var services = collection.BuildServiceProvider();
+            using var services = collection.BuildServiceProvider();
 
             var vm = services.GetRequiredService<MainWindowViewModel>();
 

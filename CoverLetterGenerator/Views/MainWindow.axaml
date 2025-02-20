@@ -15,6 +15,23 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+    <StackPanel DataContext="{Binding ReactiveViewModel}" Margin="20" Spacing="10">
+        <TextBlock>Skills:</TextBlock>
+        <ItemsControl ItemsSource="{Binding Skills}">
+            <!-- Use a custom ItemsPanel to get N items in a row -->
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="{Binding ColumnCount}" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
 
+        <TextBox Text="{Binding Checked}" />
+
+        <TextBlock>Enter your Name:</TextBlock>
+        <TextBox Text="{Binding Name}" />
+        <TextBox Text="{Binding Greeting, Mode=OneWay}"
+                 IsReadOnly="True"
+                 FontWeight="Bold" />
+    </StackPanel>
 </Window>
