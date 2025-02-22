@@ -16,6 +16,15 @@
     </Design.DataContext>
 
     <StackPanel DataContext="{Binding ReactiveViewModel}" Margin="20" Spacing="10">
+        <TextBlock>Position:</TextBlock>
+        <ComboBox ItemsSource="{Binding Positions}" SelectedItem="{Binding SelectedPosition}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
         <TextBlock>Skills:</TextBlock>
         <ItemsControl ItemsSource="{Binding Skills}">
             <!-- Use a custom ItemsPanel to get N items in a row -->
@@ -26,12 +35,8 @@
             </ItemsControl.ItemsPanel>
         </ItemsControl>
 
-        <TextBox Text="{Binding Checked}" />
+        <CheckBox Content="{Binding University.Content}" IsChecked="{Binding University.IsChecked}" />
 
-        <TextBlock>Enter your Name:</TextBlock>
-        <TextBox Text="{Binding Name}" />
-        <TextBox Text="{Binding Greeting, Mode=OneWay}"
-                 IsReadOnly="True"
-                 FontWeight="Bold" />
+        <TextBox Text="{Binding CoverLetterText, Mode=OneWay}" IsReadOnly="True" />
     </StackPanel>
 </Window>
