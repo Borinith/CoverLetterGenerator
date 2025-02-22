@@ -1,4 +1,5 @@
-﻿using CoverLetterGenerator.ViewModels;
+﻿using CoverLetterGenerator.Data;
+using CoverLetterGenerator.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CoverLetterGenerator
@@ -8,6 +9,7 @@ namespace CoverLetterGenerator
         public static void AddCommonServices(this IServiceCollection collection)
         {
             collection.AddTransient<MainWindowViewModel>();
+            collection.AddSingleton<IDataDefault, DataDefault>();
         }
     }
 }

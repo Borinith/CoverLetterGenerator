@@ -1,7 +1,14 @@
-﻿namespace CoverLetterGenerator.ViewModels
+﻿using CoverLetterGenerator.Data;
+
+namespace CoverLetterGenerator.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        public ReactiveViewModel ReactiveViewModel { get; } = new();
+        public MainWindowViewModel(IDataDefault dataDefault)
+        {
+            ReactiveViewModel = new ReactiveViewModel(dataDefault);
+        }
+
+        public ReactiveViewModel ReactiveViewModel { get; }
     }
 }

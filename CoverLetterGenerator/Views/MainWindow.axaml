@@ -37,6 +37,6 @@
 
         <CheckBox Content="{Binding University.Content}" IsChecked="{Binding University.IsChecked}" />
 
-        <TextBox Text="{Binding CoverLetterText, Mode=OneWay}" IsReadOnly="True" />
+        <TextBox Text="{Binding CoverLetterText, Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap" />
     </StackPanel>
 </Window>

@@ -11,14 +11,17 @@ namespace CoverLetterGenerator.ViewModels
 {
     public class ReactiveViewModel : ReactiveObject
     {
+        private readonly IDataDefault _dataDefault;
         private Position _selectedPosition;
 
-        public ReactiveViewModel()
+        public ReactiveViewModel(IDataDefault dataDefault)
         {
-            Positions = DataDefault.Positions;
+            _dataDefault = dataDefault;
+
+            Positions = _dataDefault.Positions;
             SelectedPosition = Positions.First();
 
-            foreach (var skill in DataDefault.Skills)
+            foreach (var skill in _dataDefault.Skills)
             {
                 var checkBox = new CheckBox
                 {
@@ -56,9 +59,9 @@ namespace CoverLetterGenerator.ViewModels
 
         public CheckBox University { get; }
 
-        public static byte ColumnCount => DataDefault.COLUMN_COUNT;
+        public byte ColumnCount => _dataDefault.ColumnCount;
 
-        public string CoverLetterText => DataDefault.GenerateCoverLetterText(
+        public string CoverLetterText => _dataDefault.GenerateCoverLetterText(
             SelectedPosition.Name,
             Skills.Where(x => x.IsChecked!.Value).Select(x => x.Content!.ToString())!,
             University.IsChecked!.Value);

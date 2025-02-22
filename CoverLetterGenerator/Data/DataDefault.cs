@@ -4,11 +4,11 @@ using System.Text;
 
 namespace CoverLetterGenerator.Data
 {
-    public static class DataDefault
+    public class DataDefault : IDataDefault
     {
-        public const byte COLUMN_COUNT = 6;
+        public byte ColumnCount => 6;
 
-        public static readonly Skill[] Skills =
+        public Skill[] Skills =>
         [
             new("C#", false),
             new(".NET Core", true),
@@ -30,7 +30,7 @@ namespace CoverLetterGenerator.Data
             new("Git", true)
         ];
 
-        public static readonly List<Position> Positions =
+        public List<Position> Positions =>
         [
             new(".NET Developer"),
             new("Backend Developer"),
@@ -41,7 +41,7 @@ namespace CoverLetterGenerator.Data
             new("Software Developer")
         ];
 
-        public static string GenerateCoverLetterText(string position, IEnumerable<string> skills, bool university)
+        public string GenerateCoverLetterText(string position, IEnumerable<string> skills, bool university)
         {
             var text = new StringBuilder();
 
