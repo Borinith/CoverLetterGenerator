@@ -1,22 +1,27 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
 using CoverLetterGenerator.Data;
+using CoverLetterGenerator.Export;
 using CoverLetterGenerator.Models;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CoverLetterGenerator.ViewModels
 {
     public class ReactiveViewModel : ReactiveObject
     {
         private readonly IDataDefault _dataDefault;
+        private readonly IExport _export;
+
         private Position _selectedPosition;
 
-        public ReactiveViewModel(IDataDefault dataDefault)
+        public ReactiveViewModel(IDataDefault dataDefault, IExport export)
         {
             _dataDefault = dataDefault;
+            _export = export;
 
             Positions = _dataDefault.Positions;
             SelectedPosition = Positions.First();
@@ -41,6 +46,11 @@ namespace CoverLetterGenerator.ViewModels
 
             University.IsCheckedChanged += OnCheckBoxesChanged;
 
+            ExportToPdf = new Button
+            {
+                Content = "Export to PDF"
+            };
+
 #pragma warning disable DF0001
             this.WhenAnyValue(o => o.SelectedPosition.Name)
                 .Subscribe(new Action<object>(_ => this.RaisePropertyChanged(nameof(CoverLetterText))));
@@ -59,16 +69,31 @@ namespace CoverLetterGenerator.ViewModels
 
         public CheckBox University { get; }
 
+        public Button ExportToPdf { get; }
+
         public byte ColumnCount => _dataDefault.ColumnCount;
 
         public string CoverLetterText => _dataDefault.GenerateCoverLetterText(
             SelectedPosition.Name,
-            Skills.Where(x => x.IsChecked!.Value).Select(x => x.Content!.ToString())!,
+            Skills.Where(x => x.IsChecked!.Value).Select(x => x.Content!.ToString()!).ToList(),
             University.IsChecked!.Value);
 
         private void OnCheckBoxesChanged(object? sender, RoutedEventArgs e)
         {
             this.RaisePropertyChanged(nameof(CoverLetterText));
+        }
+
+        public async Task ClickHandlerExportToPdf()
+        {
+            const int timeOut = 3000;
+
+            ExportToPdf.IsEnabled = false;
+            await _export.ExportToPdf(CoverLetterText);
+            ExportToPdf.Content = "Exported!";
+
+            await Task.Delay(timeOut);
+            ExportToPdf.IsEnabled = true;
+            ExportToPdf.Content = "Export to PDF";
         }
     }
 }

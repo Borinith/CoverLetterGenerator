@@ -49,5 +49,6 @@
     </PackageReference>
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
+    <PackageReference Include="PDFsharp" Version="6.1.1" />
   </ItemGroup>
 </Project>
