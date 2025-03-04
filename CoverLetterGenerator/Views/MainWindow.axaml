@@ -38,8 +38,8 @@
         <CheckBox Content="{Binding University.Content}" IsChecked="{Binding University.IsChecked}" />
 
         <Button Content="{Binding ExportToPdf.Content}"
-                Command="{Binding ClickHandlerExportToPdf}"
-                IsEnabled="{Binding ExportToPdf.IsEnabled}"/>
+                Command="{Binding ExportToPdfButton}"
+                IsEnabled="{Binding ExportToPdf.IsEnabled}" />
 
         <TextBox Text="{Binding CoverLetterText, Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap" />
     </StackPanel>

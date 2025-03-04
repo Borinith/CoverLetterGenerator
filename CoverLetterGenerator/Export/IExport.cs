@@ -4,6 +4,6 @@ namespace CoverLetterGenerator.Export
 {
     public interface IExport
     {
-        Task ExportToPdf(string text);
+        Task<bool> ExportToPdf(string text);
     }
 }

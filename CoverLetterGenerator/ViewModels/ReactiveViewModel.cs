@@ -83,13 +83,13 @@ namespace CoverLetterGenerator.ViewModels
             this.RaisePropertyChanged(nameof(CoverLetterText));
         }
 
-        public async Task ClickHandlerExportToPdf()
+        public async Task ExportToPdfButton()
         {
             const int timeOut = 3000;
 
             ExportToPdf.IsEnabled = false;
-            await _export.ExportToPdf(CoverLetterText);
-            ExportToPdf.Content = "Exported!";
+            var isSavedSuccessfully = await _export.ExportToPdf(CoverLetterText);
+            ExportToPdf.Content = isSavedSuccessfully ? "Exported!" : "Error!";
 
             await Task.Delay(timeOut);
             ExportToPdf.IsEnabled = true;

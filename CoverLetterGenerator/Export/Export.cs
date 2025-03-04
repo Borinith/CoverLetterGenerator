@@ -1,20 +1,24 @@
 ﻿using PdfSharp.Drawing;
 using PdfSharp.Drawing.Layout;
 using PdfSharp.Pdf;
+using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace CoverLetterGenerator.Export
 {
     public class Export : IExport
     {
-        public async Task ExportToPdf(string text)
+        public async Task<bool> ExportToPdf(string text)
         {
-            await Task.Run(() =>
+            return await Task.Run(() =>
             {
                 // Create a new PDF document
                 using var document = new PdfDocument();
 
                 document.Info.Title = "Cover letter";
+
+                // todo add PDF/A complaint
 
                 // Create an empty page
                 var page = document.AddPage();
@@ -33,31 +37,38 @@ namespace CoverLetterGenerator.Export
                 using var gfx = XGraphics.FromPdfPage(page);
 
                 // Create a font
-                var font = new XFont("Arial", 13);
+                var font = new XFont("Arial", 14);
 
                 var tf = new XTextFormatterEx2(gfx,
                     new XTextFormatterEx2.LayoutOptions
                     {
                         Spacing = 8,
-                        SpacingMode = XTextFormatterEx2.SpacingMode.Relative
+                        SpacingMode = XTextFormatterEx2.SpacingMode.Relative,
+                        SpacingOnNewLine = true
                     })
                 {
                     Alignment = XParagraphAlignment.Justify
                 };
-
-                /*var format = new XStringFormat
-                {
-                    LineAlignment = XLineAlignment.Near
-                };*/
 
                 // Draw the text
                 tf.DrawString(text, font, XBrushes.Black,
                     new XRect(0, 0, page.Width.Point, page.Height.Point),
                     XStringFormats.TopLeft);
 
-               // Save the document...
+                // Save the document...
                 const string filename = "Cover letter.pdf";
-                document.Save(filename);
+                var path = Path.Combine(Environment.CurrentDirectory, filename);
+
+                try
+                {
+                    document.Save(path);
+
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             });
         }
     }

@@ -75,13 +75,15 @@ namespace PdfSharp.Drawing.Layout
             public float Spacing;
 
             public SpacingMode SpacingMode;
+
+            public bool SpacingOnNewLine;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="XTextFormatter"/> class.
         /// </summary>
         public XTextFormatterEx2(XGraphics gfx)
-            : this(gfx, new LayoutOptions { SpacingMode = SpacingMode.Relative, Spacing = 0 })
+            : this(gfx, new LayoutOptions { SpacingMode = SpacingMode.Relative, Spacing = 0, SpacingOnNewLine = false })
         {
         }
 
@@ -142,9 +144,9 @@ namespace PdfSharp.Drawing.Layout
 
         private bool _preparedText;
 
-        double GetLineSpace()
+        double GetLineSpace(bool spacingOnNewLine = false)
         {
-            return _effectiveLineSpace;
+            return spacingOnNewLine ? _lineSpace + 2 : _effectiveLineSpace;
         }
 
         void CalculateLineSpace()
@@ -416,7 +418,7 @@ namespace PdfSharp.Drawing.Layout
                     {
                         AlignLine(firstIndex, idx - 1, rectWidth);
                         firstIndex = idx;
-                        y += GetLineSpace();
+                        y += GetLineSpace(_layoutOptions.SpacingOnNewLine);
                         if (y > rectHeight)
                         {
                             block.Stop = true;
