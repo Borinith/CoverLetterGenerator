@@ -1,5 +1,6 @@
 ﻿using PdfSharp.Drawing;
 using PdfSharp.Drawing.Layout;
+using PdfSharp.Fonts;
 using PdfSharp.Pdf;
 using System;
 using System.IO;
@@ -13,6 +14,8 @@ namespace CoverLetterGenerator.Export
         {
             return await Task.Run(() =>
             {
+                GlobalFontSettings.UseWindowsFontsUnderWindows = true;
+
                 // Create a new PDF document
                 using var document = new PdfDocument();
 
