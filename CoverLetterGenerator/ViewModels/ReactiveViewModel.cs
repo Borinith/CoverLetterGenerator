@@ -88,7 +88,7 @@ namespace CoverLetterGenerator.ViewModels
             const int timeOut = 3000;
 
             ExportToPdf.IsEnabled = false;
-            var isSavedSuccessfully = await _export.ExportToPdf(CoverLetterText);
+            var isSavedSuccessfully = await _export.ExportToPdfAsync(CoverLetterText);
             ExportToPdf.Content = isSavedSuccessfully ? "Exported!" : "Error!";
 
             await Task.Delay(timeOut);
