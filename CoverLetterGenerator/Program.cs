@@ -23,7 +23,7 @@ namespace CoverLetterGenerator
                 .UsePlatformDetect()
                 .WithInterFont()
                 .LogToTrace()
-                .UseReactiveUI();
+                .UseReactiveUI(builder => { });
         }
     }
 }
