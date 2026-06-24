@@ -1,4 +1,6 @@
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
+using CoverLetterGenerator.ViewModels;
+using System;
 
 namespace CoverLetterGenerator.Views
 {
@@ -7,6 +9,13 @@ namespace CoverLetterGenerator.Views
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            (DataContext as MainWindowViewModel)?.ReactiveViewModel.Dispose();
         }
     }
 }

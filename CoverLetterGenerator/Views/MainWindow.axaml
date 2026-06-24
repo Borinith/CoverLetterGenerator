@@ -33,13 +33,18 @@
                     <UniformGrid Columns="{Binding ColumnCount}" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:SkillViewModel">
+                    <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <CheckBox Content="{Binding University.Content}" IsChecked="{Binding University.IsChecked}" />
+        <CheckBox Content="University?" IsChecked="{Binding IsUniversity}" />
 
-        <Button Content="{Binding ExportToPdf.Content}"
+        <Button Content="{Binding ExportButtonText}"
                 Command="{Binding ExportToPdfButton}"
-                IsEnabled="{Binding ExportToPdf.IsEnabled}" />
+                IsEnabled="{Binding IsExportEnabled}" />
 
         <TextBox Text="{Binding CoverLetterText, Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap" />
     </StackPanel>

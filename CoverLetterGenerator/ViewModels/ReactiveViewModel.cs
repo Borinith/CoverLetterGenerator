@@ -1,21 +1,24 @@
-﻿using Avalonia.Controls;
-using Avalonia.Interactivity;
-using CoverLetterGenerator.Data;
+﻿using CoverLetterGenerator.Data;
 using CoverLetterGenerator.Export;
 using CoverLetterGenerator.Models;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Threading.Tasks;
 
 namespace CoverLetterGenerator.ViewModels
 {
-    public class ReactiveViewModel : ReactiveObject
+    public class ReactiveViewModel : ReactiveObject, IDisposable
     {
         private readonly IDataDefault _dataDefault;
         private readonly IExport _export;
+        private readonly CompositeDisposable _subscriptions = new();
 
+        private string _exportButtonText = "Export to PDF";
+        private bool _isExportEnabled = true;
+        private bool _isUniversity = true;
         private Position _selectedPosition;
 
         public ReactiveViewModel(IDataDefault dataDefault, IExport export)
@@ -26,35 +29,21 @@ namespace CoverLetterGenerator.ViewModels
             Positions = _dataDefault.Positions;
             SelectedPosition = Positions.First();
 
-            foreach (var skill in _dataDefault.Skills)
-            {
-                var checkBox = new CheckBox
-                {
-                    Content = skill.Name,
-                    IsChecked = skill.IsChecked
-                };
+            Skills = _dataDefault.Skills
+                .Select(x => new SkillViewModel(x.Name, x.IsChecked))
+                .ToList();
 
-                checkBox.IsCheckedChanged += OnCheckBoxesChanged;
-                Skills.Add(checkBox);
+            _subscriptions.Add(this.WhenAnyValue(o => o.SelectedPosition.Name)
+                .Subscribe(_ => this.RaisePropertyChanged(nameof(CoverLetterText))));
+
+            _subscriptions.Add(this.WhenAnyValue(o => o.IsUniversity)
+                .Subscribe(_ => this.RaisePropertyChanged(nameof(CoverLetterText))));
+
+            foreach (var skill in Skills)
+            {
+                _subscriptions.Add(skill.WhenAnyValue(s => s.IsChecked)
+                    .Subscribe(_ => this.RaisePropertyChanged(nameof(CoverLetterText))));
             }
-
-            University = new CheckBox
-            {
-                Content = "University?",
-                IsChecked = true
-            };
-
-            University.IsCheckedChanged += OnCheckBoxesChanged;
-
-            ExportToPdf = new Button
-            {
-                Content = "Export to PDF"
-            };
-
-#pragma warning disable DF0001
-            this.WhenAnyValue(o => o.SelectedPosition.Name)
-                .Subscribe(new Action<object>(_ => this.RaisePropertyChanged(nameof(CoverLetterText))));
-#pragma warning restore DF0001
         }
 
         public List<Position> Positions { get; }
@@ -65,35 +54,51 @@ namespace CoverLetterGenerator.ViewModels
             set => this.RaiseAndSetIfChanged(ref _selectedPosition, value);
         }
 
-        public List<CheckBox> Skills { get; set; } = [];
+        public List<SkillViewModel> Skills { get; }
 
-        public CheckBox University { get; }
+        public bool IsUniversity
+        {
+            get => _isUniversity;
+            set => this.RaiseAndSetIfChanged(ref _isUniversity, value);
+        }
 
-        public Button ExportToPdf { get; }
+        public bool IsExportEnabled
+        {
+            get => _isExportEnabled;
+            set => this.RaiseAndSetIfChanged(ref _isExportEnabled, value);
+        }
+
+        public string ExportButtonText
+        {
+            get => _exportButtonText;
+            set => this.RaiseAndSetIfChanged(ref _exportButtonText, value);
+        }
 
         public byte ColumnCount => _dataDefault.ColumnCount;
 
         public string CoverLetterText => _dataDefault.GenerateCoverLetterText(
             SelectedPosition.Name,
-            Skills.Where(x => x.IsChecked!.Value).Select(x => x.Content!.ToString()!).ToList(),
-            University.IsChecked!.Value);
-
-        private void OnCheckBoxesChanged(object? sender, RoutedEventArgs e)
-        {
-            this.RaisePropertyChanged(nameof(CoverLetterText));
-        }
+            Skills.Where(x => x.IsChecked).Select(x => x.Name).ToList(),
+            IsUniversity);
 
         public async Task ExportToPdfButton()
         {
             const int timeOut = 3000;
 
-            ExportToPdf.IsEnabled = false;
+            IsExportEnabled = false;
             var isSavedSuccessfully = await _export.ExportToPdfAsync(CoverLetterText);
-            ExportToPdf.Content = isSavedSuccessfully ? "Exported!" : "Error!";
+            ExportButtonText = isSavedSuccessfully ? "Exported!" : "Error!";
 
             await Task.Delay(timeOut);
-            ExportToPdf.IsEnabled = true;
-            ExportToPdf.Content = "Export to PDF";
+
+            IsExportEnabled = true;
+            ExportButtonText = "Export to PDF";
+        }
+
+        public void Dispose()
+        {
+            _subscriptions.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }
