@@ -11,17 +11,22 @@ namespace CoverLetterGenerator.Export
 {
     public class Export : IExport
     {
-        public async Task<bool> ExportToPdfAsync(string text)
+        public Export()
+        {
+            // Resolve fonts from the embedded, metric-compatible Arimo so export works on any platform
+            GlobalFontSettings.FontResolver ??= new EmbeddedFontResolver();
+        }
+
+        public async Task<bool> ExportToPdfAsync(string text, string filename, string title = "", string author = "")
         {
             return await Task.Run(() =>
             {
-                // Using windows fonts
-                GlobalFontSettings.UseWindowsFontsUnderWindows = true;
-
                 // Create a new PDF document
                 using var document = new PdfDocument();
 
-                document.Info.Title = "Cover letter";
+                document.Info.Title = title;
+                document.Info.Author = author;
+                document.Info.Subject = title;
 
                 // Create an empty page
                 var page = document.AddPage();
@@ -41,9 +46,6 @@ namespace CoverLetterGenerator.Export
                 // Get an XGraphics object for drawing
                 using var gfx = XGraphics.FromPdfPage(page);
 
-                // Create a font
-                var font = new XFont("Arial", 14);
-
                 var tf = new XTextFormatterEx2(gfx,
                     new XTextFormatterEx2.LayoutOptions
                     {
@@ -55,6 +57,9 @@ namespace CoverLetterGenerator.Export
                     Alignment = XParagraphAlignment.Justify
                 };
 
+                // Create a font
+                var font = new XFont("Arimo", 14);
+
                 // Draw the text
                 tf.DrawString(text, font, XBrushes.Black,
                     new XRect(0, 0, page.Width.Point, page.Height.Point),
@@ -63,8 +68,7 @@ namespace CoverLetterGenerator.Export
                 // Set PDF/A
                 document.SetPdfA();
 
-                // Save the document...
-                const string filename = "Cover letter.pdf";
+                // Save the document
                 var path = Path.Combine(Environment.CurrentDirectory, filename);
 
                 try
