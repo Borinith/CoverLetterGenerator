@@ -3,6 +3,7 @@ using PdfSharp.Drawing;
 using PdfSharp.Drawing.Layout;
 using PdfSharp.Fonts;
 using PdfSharp.Pdf;
+using PdfSharp.Quality;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -74,6 +75,7 @@ namespace CoverLetterGenerator.Export
                 try
                 {
                     document.Save(path);
+                    PdfFileUtility.ShowDocumentIfDebugging(filename);
 
                     return true;
                 }

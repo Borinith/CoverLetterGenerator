@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace CoverLetterGenerator.Tests
 {
-    public class ReactiveViewModelTests
+    public class MainWindowViewModelTests
     {
-        private static ReactiveViewModel CreateViewModel()
+        private static MainWindowViewModel CreateViewModel()
         {
-            return new ReactiveViewModel(new DataDefault(), new FakeExport());
+            return new MainWindowViewModel(new DataDefault(), new FakeExport());
         }
 
         [Test]
@@ -70,13 +70,13 @@ namespace CoverLetterGenerator.Tests
             await Assert.That(raised).IsTrue();
         }
 
-        private static bool RaisesCoverLetterTextChanged(ReactiveViewModel vm, Action change)
+        private static bool RaisesCoverLetterTextChanged(MainWindowViewModel vm, Action change)
         {
             var raised = false;
 
             vm.PropertyChanged += (_, e) =>
             {
-                if (e.PropertyName == nameof(ReactiveViewModel.CoverLetterText))
+                if (e.PropertyName == nameof(MainWindowViewModel.CoverLetterText))
                 {
                     raised = true;
                 }
