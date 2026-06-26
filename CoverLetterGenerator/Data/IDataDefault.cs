@@ -11,6 +11,6 @@ namespace CoverLetterGenerator.Data
 
         List<Position> Positions { get; }
 
-        string GenerateCoverLetterText(string position, ICollection<string> skills, bool university);
+        string GenerateCoverLetterText(string position, string[] skills, bool isUniversity);
     }
 }

@@ -29,6 +29,9 @@
 // DEALINGS IN THE SOFTWARE.
 #endregion
 
+// Vendored third-party PdfSharp code, kept close to upstream — not annotated for nullable reference types.
+#nullable disable
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

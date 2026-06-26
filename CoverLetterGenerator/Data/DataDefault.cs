@@ -41,14 +41,14 @@ namespace CoverLetterGenerator.Data
             new("Software Developer")
         ];
 
-        public string GenerateCoverLetterText(string position, ICollection<string> skills, bool university)
+        public string GenerateCoverLetterText(string position, string[] skills, bool isUniversity)
         {
             var text = new StringBuilder();
 
             text.AppendLine("Hello!");
             text.AppendLine($"I am a {position} with 4 years of experience. Proficient in designing and developing applications and databases, as well as having an experience in troubleshooting issues using C#.");
 
-            if (skills.Count > 0)
+            if (skills.Length > 0)
             {
                 text.Append("I have experience working with ");
                 text.Append(string.Join(", ", skills));
@@ -57,7 +57,7 @@ namespace CoverLetterGenerator.Data
 
             text.AppendLine("I worked according to the scrum methodology.");
 
-            if (university)
+            if (isUniversity)
             {
                 text.AppendLine("Finally, I graduated from university, and I have a bachelor's degree and a master's degree.");
             }

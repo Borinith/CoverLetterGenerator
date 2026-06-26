@@ -38,7 +38,7 @@ namespace CoverLetterGenerator.ViewModels
 
             Skills = _dataDefault.Skills
                 .Select(x => new SkillViewModel(x.Name, x.IsChecked))
-                .ToList();
+                .ToArray();
 
             _subscriptions.Add(this.WhenAnyValue(o => o.SelectedPosition.Name)
                 .Subscribe(_ => this.RaisePropertyChanged(nameof(CoverLetterText))));
@@ -61,7 +61,7 @@ namespace CoverLetterGenerator.ViewModels
             set => this.RaiseAndSetIfChanged(ref _selectedPosition, value);
         }
 
-        public List<SkillViewModel> Skills { get; }
+        public SkillViewModel[] Skills { get; }
 
         public bool IsUniversity
         {
@@ -85,7 +85,7 @@ namespace CoverLetterGenerator.ViewModels
 
         public string CoverLetterText => _dataDefault.GenerateCoverLetterText(
             SelectedPosition.Name,
-            Skills.Where(x => x.IsChecked).Select(x => x.Name).ToList(),
+            Skills.Where(x => x.IsChecked).Select(x => x.Name).ToArray(),
             IsUniversity);
 
         public async Task ExportToPdfButton()

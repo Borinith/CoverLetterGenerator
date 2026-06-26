@@ -10,7 +10,7 @@ namespace CoverLetterGenerator.Tests
         [Test]
         public async Task Includes_Position_Name()
         {
-            var result = _data.GenerateCoverLetterText("Software Engineer", [], university: false);
+            var result = _data.GenerateCoverLetterText("Software Engineer", [], false);
 
             await Assert.That(result).Contains("Software Engineer");
         }
@@ -18,7 +18,7 @@ namespace CoverLetterGenerator.Tests
         [Test]
         public async Task Lists_Selected_Skills()
         {
-            var result = _data.GenerateCoverLetterText("Backend Developer", ["C#", "Docker"], university: false);
+            var result = _data.GenerateCoverLetterText("Backend Developer", ["C#", "Docker"], false);
 
             await Assert.That(result).Contains("I have experience working with C#, Docker.");
         }
@@ -26,7 +26,7 @@ namespace CoverLetterGenerator.Tests
         [Test]
         public async Task Omits_Skills_Sentence_When_No_Skills_Are_Selected()
         {
-            var result = _data.GenerateCoverLetterText("Backend Developer", [], university: false);
+            var result = _data.GenerateCoverLetterText("Backend Developer", [], false);
 
             await Assert.That(result).DoesNotContain("I have experience working with");
         }
@@ -34,7 +34,7 @@ namespace CoverLetterGenerator.Tests
         [Test]
         public async Task Mentions_Degree_When_University_Is_True()
         {
-            var result = _data.GenerateCoverLetterText("Backend Developer", [], university: true);
+            var result = _data.GenerateCoverLetterText("Backend Developer", [], true);
 
             await Assert.That(result).Contains("graduated from university");
         }
@@ -42,7 +42,7 @@ namespace CoverLetterGenerator.Tests
         [Test]
         public async Task Omits_Degree_When_University_Is_False()
         {
-            var result = _data.GenerateCoverLetterText("Backend Developer", [], university: false);
+            var result = _data.GenerateCoverLetterText("Backend Developer", [], false);
 
             await Assert.That(result).DoesNotContain("graduated from university");
         }

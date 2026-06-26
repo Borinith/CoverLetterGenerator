@@ -40,7 +40,7 @@ namespace CoverLetterGenerator
                     DataContext = _services.GetRequiredService<MainWindowViewModel>()
                 };
 
-                desktop.Exit += (_, _) => _services?.Dispose();
+                desktop.Exit += (_, __) => _services?.Dispose();
             }
             else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
             {
