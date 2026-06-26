@@ -65,4 +65,17 @@
   <ItemGroup>
     <TrimmerRootAssembly Include="PdfSharp" />
   </ItemGroup>
+
+  <!--
+    SkiaSharp/HarfBuzzSharp ship native debug symbols (libSkiaSharp.pdb, libHarfBuzzSharp.pdb) as
+    part of their runtime assets, which DebugType=None does not cover. Strip every .pdb from the
+    Release output and publish folder, since these are only useful for debugging.
+  -->
+  <Target Name="RemoveUnnecessaryPdbFilesAfterBuildAndPublish" AfterTargets="Build;Publish">
+    <ItemGroup>
+      <PdbFilesToRemove Include="$(OutDir)**\*.pdb" />
+      <PdbFilesToRemove Include="$(PublishDir)**\*.pdb" Condition="'$(PublishDir)' != ''" />
+    </ItemGroup>
+    <Delete Files="@(PdbFilesToRemove)" />
+  </Target>
 </Project>

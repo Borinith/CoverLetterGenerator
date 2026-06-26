@@ -14,4 +14,15 @@
     <ProjectReference Include="..\CoverLetterGenerator\CoverLetterGenerator.csproj" />
   </ItemGroup>
 
+  <!--
+    SkiaSharp/HarfBuzzSharp ship native debug symbols (libSkiaSharp.pdb, libHarfBuzzSharp.pdb) as
+    part of their runtime assets, which DebugType=None does not cover. Strip every .pdb from the
+    Release output and publish folder, since these are only useful for debugging.
+  -->
+  <Target Name="RemoveUnnecessaryPdbFilesAfterBuild" AfterTargets="Build">
+    <ItemGroup>
+      <PdbFilesToRemove Include="$(OutDir)**\*.pdb" />
+    </ItemGroup>
+    <Delete Files="@(PdbFilesToRemove)" />
+  </Target>
 </Project>
