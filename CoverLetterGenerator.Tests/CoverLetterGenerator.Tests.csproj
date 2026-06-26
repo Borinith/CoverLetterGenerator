@@ -19,7 +19,7 @@
     part of their runtime assets, which DebugType=None does not cover. Strip every .pdb from the
     Release output and publish folder, since these are only useful for debugging.
   -->
-  <Target Name="RemoveUnnecessaryPdbFilesAfterBuild" AfterTargets="Build">
+  <Target Name="RemoveUnnecessaryPdbFilesAfterBuild" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
     <ItemGroup>
       <PdbFilesToRemove Include="$(OutDir)**\*.pdb" />
     </ItemGroup>

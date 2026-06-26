@@ -6,6 +6,12 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <!-- Surface trimming/AOT issues on every build (not just publish) so new reflection is caught early. -->
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <EnableAotAnalyzer>true</EnableAotAnalyzer>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <!-- New trimming/AOT risks fail the build; the known ReactiveUI WhenAnyValue IL2026 is suppressed with justification. -->
+    <WarningsAsErrors>$(WarningsAsErrors);IL2026;IL2057;IL2072;IL2075;IL3050</WarningsAsErrors>
     <ApplicationIcon>Assets\avalonia-logo.ico</ApplicationIcon>
     <Authors>Cobra Commander</Authors>
     <StartupObject>CoverLetterGenerator.Program</StartupObject>
@@ -71,7 +77,7 @@
     part of their runtime assets, which DebugType=None does not cover. Strip every .pdb from the
     Release output and publish folder, since these are only useful for debugging.
   -->
-  <Target Name="RemoveUnnecessaryPdbFilesAfterBuildAndPublish" AfterTargets="Build;Publish">
+  <Target Name="RemoveUnnecessaryPdbFilesAfterBuildAndPublish" AfterTargets="Build;Publish" Condition="'$(Configuration)' == 'Release'">
     <ItemGroup>
       <PdbFilesToRemove Include="$(OutDir)**\*.pdb" />
       <PdbFilesToRemove Include="$(PublishDir)**\*.pdb" Condition="'$(PublishDir)' != ''" />

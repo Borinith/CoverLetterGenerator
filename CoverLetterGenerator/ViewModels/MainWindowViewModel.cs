@@ -4,6 +4,7 @@ using CoverLetterGenerator.Models;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
@@ -28,6 +29,11 @@ namespace CoverLetterGenerator.ViewModels
         {
         }
 
+        [UnconditionalSuppressMessage("Trimming", "IL2026",
+            Justification =
+                "ReactiveUI WhenAnyValue reads the observed properties via reflection over expression trees. Those " +
+                "properties (SelectedPosition.Name, IsUniversity, SkillViewModel.IsChecked) are also referenced by " +
+                "compiled XAML bindings and CoverLetterText, so they survive trimming. The AOT build is smoke-tested.")]
         public MainWindowViewModel(IDataDefault dataDefault, IExport export)
         {
             _dataDefault = dataDefault;
