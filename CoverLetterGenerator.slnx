@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/Solution Items/" />
+  <Project Path="CoverLetterGenerator.Tests/CoverLetterGenerator.Tests.csproj" />
+  <Project Path="CoverLetterGenerator/CoverLetterGenerator.csproj" />
+</Solution>

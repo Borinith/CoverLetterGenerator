@@ -16,6 +16,8 @@ namespace CoverLetterGenerator.ViewModels
     {
         private readonly IDataDefault _dataDefault;
         private readonly IExport _export;
+
+        //todo remove System.Reactive package
         private readonly CompositeDisposable _subscriptions = new();
 
         private string _exportButtonText = "Export to PDF";
