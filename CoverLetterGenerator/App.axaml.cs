@@ -5,11 +5,13 @@ using Avalonia.Markup.Xaml;
 using CoverLetterGenerator.ViewModels;
 using CoverLetterGenerator.Views;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace CoverLetterGenerator
 {
     public class App : Application
     {
+        private IDisposable? _mainWindowViewModelActivation;
         private ServiceProvider? _services;
 
         public override void Initialize()
@@ -35,12 +37,19 @@ namespace CoverLetterGenerator
             // ReSharper disable once ConvertIfStatementToSwitchStatement
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
+                var viewModel = _services.GetRequiredService<MainWindowViewModel>();
+                _mainWindowViewModelActivation = viewModel.Activator.Activate();
+
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = _services.GetRequiredService<MainWindowViewModel>()
+                    DataContext = viewModel
                 };
 
-                desktop.Exit += (_, __) => _services?.Dispose();
+                desktop.Exit += (_, __) =>
+                {
+                    _mainWindowViewModelActivation?.Dispose();
+                    _services?.Dispose();
+                };
             }
             else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
             {

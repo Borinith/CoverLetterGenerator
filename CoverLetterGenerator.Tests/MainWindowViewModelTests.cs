@@ -1,6 +1,7 @@
 ﻿using CoverLetterGenerator.Data;
 using CoverLetterGenerator.Export;
 using CoverLetterGenerator.ViewModels;
+using ReactiveUI;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,15 +10,19 @@ namespace CoverLetterGenerator.Tests
 {
     public class MainWindowViewModelTests
     {
-        private static MainWindowViewModel CreateViewModel()
+        private static ActivationScope<MainWindowViewModel> CreateActivationScope()
         {
-            return new MainWindowViewModel(new DataDefault(), new FakeExport());
+            var viewModel = new MainWindowViewModel(new DataDefault(), new FakeExport());
+
+            return new ActivationScope<MainWindowViewModel>(viewModel);
         }
 
         [Test]
         public async Task CoverLetterText_Reflects_Selected_Position()
         {
-            using var vm = CreateViewModel();
+            using var scope = CreateActivationScope();
+            var vm = scope.ViewModel;
+
             vm.SelectedPosition = vm.Positions[1];
 
             await Assert.That(vm.CoverLetterText).Contains(vm.Positions[1].Name);
@@ -26,7 +31,9 @@ namespace CoverLetterGenerator.Tests
         [Test]
         public async Task CoverLetterText_Lists_A_Newly_Checked_Skill()
         {
-            using var vm = CreateViewModel();
+            using var scope = CreateActivationScope();
+            var vm = scope.ViewModel;
+
             var skill = vm.Skills.First(s => s.Name == "PostgreSQL");
 
             skill.IsChecked = true;
@@ -37,7 +44,9 @@ namespace CoverLetterGenerator.Tests
         [Test]
         public async Task CoverLetterText_Omits_University_Sentence_When_Disabled()
         {
-            using var vm = CreateViewModel();
+            using var scope = CreateActivationScope();
+            var vm = scope.ViewModel;
+
             vm.IsUniversity = false;
 
             await Assert.That(vm.CoverLetterText).DoesNotContain("graduated from university");
@@ -46,7 +55,9 @@ namespace CoverLetterGenerator.Tests
         [Test]
         public async Task Changing_Position_Raises_CoverLetterText_Changed()
         {
-            using var vm = CreateViewModel();
+            using var scope = CreateActivationScope();
+            var vm = scope.ViewModel;
+
             var raised = RaisesCoverLetterTextChanged(vm, () => vm.SelectedPosition = vm.Positions[1]);
 
             await Assert.That(raised).IsTrue();
@@ -55,7 +66,9 @@ namespace CoverLetterGenerator.Tests
         [Test]
         public async Task Toggling_A_Skill_Raises_CoverLetterText_Changed()
         {
-            using var vm = CreateViewModel();
+            using var scope = CreateActivationScope();
+            var vm = scope.ViewModel;
+
             var raised = RaisesCoverLetterTextChanged(vm, () => vm.Skills[0].IsChecked = !vm.Skills[0].IsChecked);
 
             await Assert.That(raised).IsTrue();
@@ -64,7 +77,9 @@ namespace CoverLetterGenerator.Tests
         [Test]
         public async Task Toggling_University_Raises_CoverLetterText_Changed()
         {
-            using var vm = CreateViewModel();
+            using var scope = CreateActivationScope();
+            var vm = scope.ViewModel;
+
             var raised = RaisesCoverLetterTextChanged(vm, () => vm.IsUniversity = !vm.IsUniversity);
 
             await Assert.That(raised).IsTrue();
@@ -85,6 +100,25 @@ namespace CoverLetterGenerator.Tests
             change();
 
             return raised;
+        }
+
+        private sealed class ActivationScope<TViewModel> : IDisposable
+            where TViewModel : IActivatableViewModel
+        {
+            private readonly IDisposable _activation;
+
+            public ActivationScope(TViewModel viewModel)
+            {
+                ViewModel = viewModel;
+                _activation = ViewModel.Activator.Activate();
+            }
+
+            public TViewModel ViewModel { get; }
+
+            public void Dispose()
+            {
+                _activation.Dispose();
+            }
         }
 
         private sealed class FakeExport : IExport

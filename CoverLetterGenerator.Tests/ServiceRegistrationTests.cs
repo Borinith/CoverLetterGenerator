@@ -11,8 +11,8 @@ namespace CoverLetterGenerator.Tests
         {
             var services = new ServiceCollection();
             services.AddCommonServices();
-            using var provider = services.BuildServiceProvider();
-            using var vm = provider.GetRequiredService<MainWindowViewModel>();
+            await using var provider = services.BuildServiceProvider();
+            var vm = provider.GetRequiredService<MainWindowViewModel>();
 
             await Assert.That(vm.Positions).IsNotEmpty();
         }

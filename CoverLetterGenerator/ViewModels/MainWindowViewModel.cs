@@ -2,24 +2,19 @@
 using CoverLetterGenerator.Export;
 using CoverLetterGenerator.Models;
 using ReactiveUI;
-using System;
+using ReactiveUI.Primitives;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reactive.Disposables;
 using System.Threading.Tasks;
 using DefaultExport = CoverLetterGenerator.Export.Export;
 
 namespace CoverLetterGenerator.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase, IDisposable
+    public class MainWindowViewModel : ViewModelBase
     {
         private readonly IDataDefault _dataDefault;
         private readonly IExport _export;
-
-        //todo remove System.Reactive package
-        private readonly CompositeDisposable _subscriptions = new();
-
         private string _exportButtonText = "Export to PDF";
         private bool _isExportEnabled = true;
         private bool _isUniversity = true;
@@ -48,17 +43,25 @@ namespace CoverLetterGenerator.ViewModels
                 .Select(x => new SkillViewModel(x.Name, x.IsChecked))
                 .ToArray();
 
-            _subscriptions.Add(this.WhenAnyValue(o => o.SelectedPosition.Name)
-                .Subscribe(_ => this.RaisePropertyChanged(nameof(CoverLetterText))));
-
-            _subscriptions.Add(this.WhenAnyValue(o => o.IsUniversity)
-                .Subscribe(_ => this.RaisePropertyChanged(nameof(CoverLetterText))));
-
-            foreach (var skill in Skills)
+#pragma warning disable DF0001
+            this.WhenActivated(disposables =>
             {
-                _subscriptions.Add(skill.WhenAnyValue(s => s.IsChecked)
-                    .Subscribe(_ => this.RaisePropertyChanged(nameof(CoverLetterText))));
-            }
+                this.WhenAnyValue(o => o.SelectedPosition.Name)
+                    .Subscribe(_ => this.RaisePropertyChanged(nameof(CoverLetterText)))
+                    .DisposeWith(disposables);
+
+                this.WhenAnyValue(o => o.IsUniversity)
+                    .Subscribe(_ => this.RaisePropertyChanged(nameof(CoverLetterText)))
+                    .DisposeWith(disposables);
+
+                foreach (var skill in Skills)
+                {
+                    skill.WhenAnyValue(s => s.IsChecked)
+                        .Subscribe(_ => this.RaisePropertyChanged(nameof(CoverLetterText)))
+                        .DisposeWith(disposables);
+                }
+            });
+#pragma warning restore DF0001
         }
 
         public List<Position> Positions { get; }
@@ -108,12 +111,6 @@ namespace CoverLetterGenerator.ViewModels
 
             IsExportEnabled = true;
             ExportButtonText = "Export to PDF";
-        }
-
-        public void Dispose()
-        {
-            _subscriptions.Dispose();
-            GC.SuppressFinalize(this);
         }
     }
 }

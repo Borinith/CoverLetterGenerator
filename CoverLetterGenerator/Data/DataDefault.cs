@@ -46,7 +46,7 @@ namespace CoverLetterGenerator.Data
             var text = new StringBuilder();
 
             text.AppendLine("Hello!");
-            text.AppendLine($"I am a {position} with 4 years of experience. Proficient in designing and developing applications and databases, as well as having an experience in troubleshooting issues using C#.");
+            text.AppendLine($"I am a {position} with 5 years of experience. Proficient in designing and developing applications and databases, as well as having an experience in troubleshooting issues using C#.");
 
             if (skills.Length > 0)
             {

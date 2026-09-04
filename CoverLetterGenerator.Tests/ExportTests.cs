@@ -16,9 +16,9 @@ namespace CoverLetterGenerator.Tests
 
             try
             {
-                var saved = await export.ExportToPdfAsync("Hello!\nThank you", filename);
+                var isSavedSuccessfully = await export.ExportToPdfAsync("Hello!\nThank you", filename);
 
-                await Assert.That(saved).IsTrue();
+                await Assert.That(isSavedSuccessfully).IsTrue();
                 await Assert.That(File.Exists(path)).IsTrue();
             }
             finally
